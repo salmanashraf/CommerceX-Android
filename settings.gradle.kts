@@ -21,3 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "CommerceX"
 include(":app")
+include(":core")

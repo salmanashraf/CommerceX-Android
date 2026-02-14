@@ -160,7 +160,7 @@ cd CommerceX
 ```bash
 CommerceX/
 ├── app/                    # Main application module
-├── core/                   # Core modules
+├── coreds/                   # Core modules
 │   ├── network/
 │   ├── database/
 │   ├── ui/
