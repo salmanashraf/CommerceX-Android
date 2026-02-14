@@ -1,15 +1,214 @@
+# ============================================================================
+# ANDROID STUDIO / IDEA IDE
+# ============================================================================
+.idea/
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+*.iws
+*.ipr
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+.cproject
+.factorypath
+
+# ============================================================================
+# GRADLE BUILD SYSTEM
+# ============================================================================
+.gradle/
+build/
+gradle-app.setting
+!gradle/wrapper/gradle-wrapper.jar
+!gradle-wrapper.jar
+.gradletasknamecache
+gradle-wrapper.properties
+
+# ============================================================================
+# LOCAL CONFIGURATION
+# ============================================================================
 local.properties
+/local.properties
+
+# ============================================================================
+# LOG / TEMP FILES
+# ============================================================================
+*.log
+*.tmp
+*.temp
+*.bak
+*.backup
+
+# ============================================================================
+# ANDROID SPECIFIC
+# ============================================================================
+/captures
+/screenshots
+.externalNativeBuild
+.cxx/
+*.apk
+*.ap_
+*.aab
+*.aar
+*.dex
+*.class
+*.o
+*.so
+*.a
+*.jar
+
+# ============================================================================
+# OS SPECIFIC
+# ============================================================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.exe
+*.cmd
+*.bat
+*.sh
+
+# ============================================================================
+# INTELLIJ IDEA
+# ============================================================================
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/assetWizardSettings.xml
+.idea/dictionaries
+.idea/vcs.xml
+.idea/jsLibraryMappings.xml
+.idea/shelf
+.idea/copyright/
+.idea/inspectionProfiles/
+.idea/artifacts/
+.idea/modules/
+.idea/runConfigurations/
+.idea/.name
+.idea/encodings.xml
+.idea/misc.xml
+.idea/navEditor.xml
+.idea/deploymentTargetSelector.xml
+.idea/compiler.xml
+.idea/migrations.xml
+.idea/markdown.xml
+.idea/caches/
+.idea/copilot.data.migration.ask2agent.xml
+
+# ============================================================================
+# ANDROID VIRTUAL DEVICE
+# ============================================================================
+.android/
+AVD/
+emulator-5554.ini
+
+# ============================================================================
+# BUILD ARTIFACTS
+# ============================================================================
+bin/
+gen/
+out/
+*.stackdump
+*.tar.gz
+*.rar
+*.zip
+
+# ============================================================================
+# VERSION CONTROL
+# ============================================================================
+.git/
+.gitmodules
+.svn/
+.hg/
+.bzr/
+_darcs/
+CVS/
+RCS/
+
+# ============================================================================
+# RUNTIME / DEPENDENCY CACHES
+# ============================================================================
+.m2/
+.ivy2/
+*.lock
+Gemfile.lock
+node_modules/
+bower_components/
+
+# ============================================================================
+# DISTRIBUTION
+# ============================================================================
+/dist/
+/release/
+release/
+
+# ============================================================================
+# KOTLIN / JAVA
+# ============================================================================
+*.kt~
+*.java~
+out/
+*.class
+target/
+*.kapt.log
+
+# ============================================================================
+# NATIVE BUILD
+# ============================================================================
+*.o
+*.so
+*.a
+*.dll
+*.dylib
+CMakeFiles/
+
+# ============================================================================
+# ENVIRONMENT / SECRETS
+# ============================================================================
+.env
+.env.local
+.env.*.local
+secrets.properties
+keystore.properties
+signing.properties
+
+# ============================================================================
+# PLUGIN SPECIFIC
+# ============================================================================
+.plugins/
+plugins/
+
+# ============================================================================
+# TEST ARTIFACTS
+# ============================================================================
+coverage/
+.coverage
+.coveragerc
+.pytest_cache/
+htmlcov/
+.hypothesis/
+
+# ============================================================================
+# DOCUMENTATION (Local Development Only)
+# ============================================================================
+docs/
+/docs/
+*.md
+!.github/
+!README.md
+!CONTRIBUTING.md
+!LICENSE.md
+
