@@ -1,4 +1,4 @@
-package com.sa.commercex.core.ui.component
+package com.sa.core.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

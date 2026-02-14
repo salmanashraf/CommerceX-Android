@@ -74,11 +74,36 @@ jobs:
         run: chmod +x gradlew
 
       - name: Generate Coverage Report
-        run: ./gradlew koverXmlReport --no-daemon
+        run: |
+          set -euo pipefail
+
+          COVERAGE_TASK=""
+          TASKS_OUTPUT="$(./gradlew -q tasks --all --no-daemon)"
+
+          if echo "$TASKS_OUTPUT" | grep -qE '^koverXmlReportDebug( |$)'; then
+            COVERAGE_TASK="koverXmlReportDebug"
+          elif echo "$TASKS_OUTPUT" | grep -qE '^app:koverXmlReportDebug( |$)'; then
+            COVERAGE_TASK=":app:koverXmlReportDebug"
+          elif echo "$TASKS_OUTPUT" | grep -qE '^koverXmlReport( |$)'; then
+            COVERAGE_TASK="koverXmlReport"
+          elif echo "$TASKS_OUTPUT" | grep -qE '^app:koverXmlReport( |$)'; then
+            COVERAGE_TASK=":app:koverXmlReport"
+          elif echo "$TASKS_OUTPUT" | grep -qE '^jacocoTestReport( |$)'; then
+            COVERAGE_TASK="jacocoTestReport"
+          fi
+
+          if [ -z "$COVERAGE_TASK" ]; then
+            echo "No coverage task found. Skipping coverage report generation."
+          else
+            echo "Running coverage task: $COVERAGE_TASK"
+            ./gradlew "$COVERAGE_TASK" --no-daemon
+          fi
 
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: '**/build/reports/kover/'
-
+          path: |
+            **/build/reports/kover/
+            **/build/reports/jacoco/
+          if-no-files-found: ignore
