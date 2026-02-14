@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "CommerceX"
 include(":app")
-include(":core")
+include(":core:ui")
