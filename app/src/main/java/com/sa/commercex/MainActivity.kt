@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import com.sa.feature.cart.ui.CartScreenMockup
 import com.sa.feature.product.ui.HomeScreenMockup
 import com.sa.feature.product.ui.ProductDetailMockup
+import com.sa.feature.search.ui.SearchScreenDefaultMockup
 import com.sa.core.ui.theme.CommerceXTheme
 
 /**
@@ -29,14 +30,20 @@ class MainActivity : ComponentActivity() {
             CommerceXTheme {
                 var showProductDetail by remember { mutableStateOf(false) }
                 var showCart by remember { mutableStateOf(false) }
+                var showSearch by remember { mutableStateOf(false) }
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     when {
+                        showSearch -> {
+                            SearchScreenDefaultMockup()
+                        }
                         showCart -> {
-                            CartScreenMockup()
+                            CartScreenMockup(
+                                onBackClick = { showCart = false }
+                            )
                         }
                         showProductDetail -> {
                             ProductDetailMockup(
@@ -46,7 +53,8 @@ class MainActivity : ComponentActivity() {
                         else -> {
                             HomeScreenMockup(
                                 onProductClick = { showProductDetail = true },
-                                onCartClick = { showCart = true }
+                                onCartClick = { showCart = true },
+                                onSearchClick = { showSearch = true }
                             )
                         }
                     }
