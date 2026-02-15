@@ -7,8 +7,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import com.sa.core.ui.preview.HomeScreenMockup
+import com.sa.feature.product.ui.HomeScreenMockup
+import com.sa.feature.product.ui.ProductDetailMockup
 import com.sa.core.ui.theme.CommerceXTheme
 
 /**
@@ -24,15 +26,23 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             CommerceXTheme {
+                var showProductDetail by remember { mutableStateOf(false) }
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    // Display Home Screen Mockup
-                    HomeScreenMockup()
+                    if (showProductDetail) {
+                        ProductDetailMockup(
+                            onBackClick = { showProductDetail = false }
+                        )
+                    } else {
+                        HomeScreenMockup(
+                            onProductClick = { showProductDetail = true }
+                        )
+                    }
                 }
             }
         }
     }
 }
-
