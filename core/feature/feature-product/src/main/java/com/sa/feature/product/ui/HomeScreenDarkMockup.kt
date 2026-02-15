@@ -1,6 +1,6 @@
-package com.sa.core.ui.preview
+package com.sa.feature.product.ui
 
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.sa.core.ui.theme.CommerceXTheme
 
@@ -8,8 +8,6 @@ import com.sa.core.ui.theme.CommerceXTheme
  * Home Screen Mockup - Dark Mode
  *
  * US-0.3: Screen Mockups - Home & Product List
- *
- * Demonstrates the home screen in dark theme
  */
 @Preview(
     name = "Home Screen - Dark Mode",
@@ -27,8 +25,6 @@ fun HomeScreenDarkPreview() {
 
 /**
  * Home Screen States Preview
- *
- * Shows different states of the home screen
  */
 @Preview(
     name = "Home Screen - No Cart Items",
@@ -39,7 +35,6 @@ fun HomeScreenDarkPreview() {
 @Composable
 fun HomeScreenEmptyCartPreview() {
     CommerceXTheme {
-
         HomeScreenMockup()
     }
 }

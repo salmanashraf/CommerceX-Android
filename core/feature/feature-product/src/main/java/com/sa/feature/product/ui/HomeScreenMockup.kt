@@ -1,4 +1,4 @@
-package com.sa.core.ui.preview
+package com.sa.feature.product.ui
 
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
@@ -29,14 +29,6 @@ import com.sa.core.ui.theme.*
  * Home Screen Mockup - Light Mode
  *
  * US-0.3: Screen Mockups - Home & Product List
- *
- * Features:
- * - Sticky glassmorphic header
- * - Hero banner with gradient
- * - Category chips (horizontal scrollable)
- * - 2-column product grid
- * - Fixed bottom navigation
- * - Staggered fade-up animations
  */
 @Preview(
     name = "Home Screen - Light Mode",
@@ -52,7 +44,10 @@ fun HomeScreenLightPreview() {
 }
 
 @Composable
-fun HomeScreenMockup() {
+fun HomeScreenMockup(
+    onProductClick: () -> Unit = {},
+    onCartClick: () -> Unit = {}
+) {
     var selectedCategory by remember { mutableStateOf("All") }
     var cartItemCount by remember { mutableStateOf(3) }
     var selectedNavItem by remember { mutableStateOf<BottomNavItem>(BottomNavItem.HOME) }
@@ -77,6 +72,7 @@ fun HomeScreenMockup() {
         modifier = Modifier
             .fillMaxSize()
             .background(BackgroundColor)
+            .windowInsetsPadding(WindowInsets.systemBars)
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
@@ -104,7 +100,8 @@ fun HomeScreenMockup() {
             // Product Grid with staggered animation
             ProductGridWithAnimation(
                 products = products,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                onProductClick = onProductClick
             )
         }
 
@@ -112,21 +109,21 @@ fun HomeScreenMockup() {
         BottomNavigationBar(
             selectedItem = selectedNavItem,
             cartItemCount = cartItemCount,
-            onItemSelected = { selectedNavItem = it },
-            modifier = Modifier.align(Alignment.BottomCenter)
+            onItemSelected = { item ->
+                selectedNavItem = item
+                if (item == BottomNavItem.CART) {
+                    onCartClick()
+                }
+            },
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .navigationBarsPadding()
         )
     }
 }
 
 /**
  * Glassmorphic Header Component
- *
- * Features:
- * - White 80% opacity background
- * - Backdrop blur effect
- * - Gradient text logo
- * - Search and cart icons
- * - Bottom border
  */
 @Composable
 fun GlassmorphicHeader(
@@ -151,7 +148,6 @@ fun GlassmorphicHeader(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                // App Title with Gradient
                 Text(
                     text = "CommerceX",
                     style = MaterialTheme.typography.headlineSmall,
@@ -162,7 +158,6 @@ fun GlassmorphicHeader(
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
                 ) {
-                    // Search Icon
                     IconButton(onClick = onSearchClick) {
                         Icon(
                             imageVector = Icons.Filled.Search,
@@ -171,7 +166,6 @@ fun GlassmorphicHeader(
                         )
                     }
 
-                    // Cart Icon with Badge
                     Box {
                         IconButton(onClick = onCartClick) {
                             Icon(
@@ -192,7 +186,6 @@ fun GlassmorphicHeader(
                 }
             }
 
-            // Bottom border
             HorizontalDivider(
                 modifier = Modifier.align(Alignment.BottomCenter),
                 thickness = 1.dp,
@@ -204,11 +197,6 @@ fun GlassmorphicHeader(
 
 /**
  * Hero Banner Component
- *
- * Features:
- * - Purple to Orange gradient background
- * - "Summer Collection / Up to 50% OFF" text
- * - Decorative translucent circles
  */
 @Composable
 fun HeroBanner() {
@@ -220,7 +208,6 @@ fun HeroBanner() {
                 brush = CommerceXGradients.heroGradient
             )
     ) {
-        // Decorative circles
         Box(
             modifier = Modifier
                 .size(120.dp)
@@ -241,7 +228,6 @@ fun HeroBanner() {
                 )
         )
 
-        // Banner content
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -269,16 +255,12 @@ fun HeroBanner() {
 
 /**
  * Product Grid with Staggered Fade-Up Animation
- *
- * Features:
- * - 2-column grid layout
- * - Staggered entrance animations
- * - Fade-up effect with delay per item
  */
 @Composable
 fun ProductGridWithAnimation(
     products: List<MockProduct>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onProductClick: () -> Unit = {}
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
@@ -287,12 +269,13 @@ fun ProductGridWithAnimation(
             .padding(horizontal = Spacing.lg),
         horizontalArrangement = Arrangement.spacedBy(Spacing.md),
         verticalArrangement = Arrangement.spacedBy(Spacing.lg),
-        contentPadding = PaddingValues(bottom = 80.dp) // Space for bottom nav
+        contentPadding = PaddingValues(bottom = 80.dp)
     ) {
         itemsIndexed(products) { index, product ->
             AnimatedProductCard(
                 product = product,
-                index = index
+                index = index,
+                onClick = onProductClick
             )
         }
     }
@@ -304,12 +287,13 @@ fun ProductGridWithAnimation(
 @Composable
 fun AnimatedProductCard(
     product: MockProduct,
-    index: Int
+    index: Int,
+    onClick: () -> Unit = {}
 ) {
     var isVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        kotlinx.coroutines.delay(index * 50L) // 50ms delay per item
+        kotlinx.coroutines.delay(index * 50L)
         isVisible = true
     }
 
@@ -343,7 +327,7 @@ fun AnimatedProductCard(
             reviewCount = product.reviewCount,
             isWishlisted = false,
             onWishlistClick = { /* Wishlist action */ },
-            onClick = { /* Navigate to detail */ }
+            onClick = onClick
         )
     }
 }
@@ -359,4 +343,3 @@ data class MockProduct(
     val rating: Double,
     val reviewCount: Int
 )
-
