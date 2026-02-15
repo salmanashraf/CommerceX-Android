@@ -45,7 +45,8 @@ fun HomeScreenLightPreview() {
 
 @Composable
 fun HomeScreenMockup(
-    onProductClick: () -> Unit = {}
+    onProductClick: () -> Unit = {},
+    onCartClick: () -> Unit = {}
 ) {
     var selectedCategory by remember { mutableStateOf("All") }
     var cartItemCount by remember { mutableStateOf(3) }
@@ -108,7 +109,12 @@ fun HomeScreenMockup(
         BottomNavigationBar(
             selectedItem = selectedNavItem,
             cartItemCount = cartItemCount,
-            onItemSelected = { selectedNavItem = it },
+            onItemSelected = { item ->
+                selectedNavItem = item
+                if (item == BottomNavItem.CART) {
+                    onCartClick()
+                }
+            },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .navigationBarsPadding()
@@ -337,4 +343,3 @@ data class MockProduct(
     val rating: Double,
     val reviewCount: Int
 )
-

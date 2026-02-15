@@ -23,3 +23,4 @@ rootProject.name = "CommerceX"
 include(":app")
 include(":core:ui")
 include(":core:feature:feature-product")
+include(":core:feature:feature-cart")
