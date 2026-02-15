@@ -46,7 +46,8 @@ fun HomeScreenLightPreview() {
 @Composable
 fun HomeScreenMockup(
     onProductClick: () -> Unit = {},
-    onCartClick: () -> Unit = {}
+    onCartClick: () -> Unit = {},
+    onSearchClick: () -> Unit = {}
 ) {
     var selectedCategory by remember { mutableStateOf("All") }
     var cartItemCount by remember { mutableStateOf(3) }
@@ -111,8 +112,10 @@ fun HomeScreenMockup(
             cartItemCount = cartItemCount,
             onItemSelected = { item ->
                 selectedNavItem = item
-                if (item == BottomNavItem.CART) {
-                    onCartClick()
+                when (item) {
+                    BottomNavItem.CART -> onCartClick()
+                    BottomNavItem.SEARCH -> onSearchClick()
+                    else -> Unit
                 }
             },
             modifier = Modifier
