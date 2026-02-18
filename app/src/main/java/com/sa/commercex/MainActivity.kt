@@ -10,6 +10,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.sa.feature.cart.ui.CartScreenMockup
+import com.sa.feature.auth.ui.LoginScreenMockup
+import com.sa.feature.auth.ui.ProfileScreenMockup
 import com.sa.feature.product.ui.HomeScreenMockup
 import com.sa.feature.product.ui.ProductDetailMockup
 import com.sa.feature.search.ui.SearchScreenDefaultMockup
@@ -31,12 +33,31 @@ class MainActivity : ComponentActivity() {
                 var showProductDetail by remember { mutableStateOf(false) }
                 var showCart by remember { mutableStateOf(false) }
                 var showSearch by remember { mutableStateOf(false) }
+                var showProfile by remember { mutableStateOf(false) }
+                var showLogin by remember { mutableStateOf(false) }
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     when {
+                        showLogin -> {
+                            LoginScreenMockup(
+                                onSignInClick = {
+                                    showLogin = false
+                                    showProfile = true
+                                }
+                            )
+                        }
+                        showProfile -> {
+                            ProfileScreenMockup(
+                                onBackClick = { showProfile = false },
+                                onLogoutClick = {
+                                    showProfile = false
+                                    showLogin = true
+                                }
+                            )
+                        }
                         showSearch -> {
                             SearchScreenDefaultMockup()
                         }
@@ -54,7 +75,8 @@ class MainActivity : ComponentActivity() {
                             HomeScreenMockup(
                                 onProductClick = { showProductDetail = true },
                                 onCartClick = { showCart = true },
-                                onSearchClick = { showSearch = true }
+                                onSearchClick = { showSearch = true },
+                                onProfileClick = { showProfile = true }
                             )
                         }
                     }
