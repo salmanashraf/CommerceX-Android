@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -72,7 +73,9 @@ fun SearchScreenNoResultsPreview() {
 }
 
 @Composable
-fun SearchScreenDefaultMockup() {
+fun SearchScreenDefaultMockup(
+    onBackClick: () -> Unit = {}
+) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -86,7 +89,7 @@ fun SearchScreenDefaultMockup() {
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(Spacing.lg)
         ) {
-            SearchHeader()
+            SearchHeader(onBackClick = onBackClick)
 
             SearchBar(
                 value = "",
@@ -210,9 +213,11 @@ fun SearchScreenNoResultsMockup() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SearchHeader() {
+@OptIn(ExperimentalMaterial3Api::class)
+private fun SearchHeader(
+    onBackClick: () -> Unit = {}
+) {
     TopAppBar(
         title = {
             Text(
@@ -222,9 +227,9 @@ private fun SearchHeader() {
             )
         },
         navigationIcon = {
-            IconButton(onClick = { /* Back action */ }) {
+            IconButton(onClick = onBackClick) {
                 Icon(
-                    imageVector = Icons.Filled.Search,
+                    imageVector = Icons.Filled.ArrowBack,
                     contentDescription = "Back",
                     tint = TextPrimaryColor
                 )
@@ -276,4 +281,3 @@ private data class MockSearchProduct(
     val rating: Double,
     val reviewCount: Int
 )
-
