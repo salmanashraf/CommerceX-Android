@@ -10,30 +10,53 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.with
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.sa.core.ui.component.*
-import com.sa.core.ui.theme.*
+import com.sa.core.ui.component.BottomNavItem
+import com.sa.core.ui.component.BottomNavigationBar
+import com.sa.core.ui.component.Badge
+import com.sa.core.ui.component.CategoryChipsRow
+import com.sa.core.ui.component.ProductCard
+import com.sa.core.ui.component.ShimmerProductGrid
+import com.sa.core.ui.theme.BackgroundColor
+import com.sa.core.ui.theme.CommerceXGradients
+import com.sa.core.ui.theme.CommerceXTheme
+import com.sa.core.ui.theme.DividerColor
+import com.sa.core.ui.theme.PrimaryColor
+import com.sa.core.ui.theme.Spacing
+import com.sa.core.ui.theme.TextPrimaryColor
+import com.sa.core.ui.theme.TextSecondaryColor
 import kotlinx.coroutines.delay
 
 /**
@@ -68,7 +91,6 @@ fun HomeScreenMockup(
     var isRefreshing by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(true) }
 
-    // Sample product data for mockup
     val products = remember {
         listOf(
             MockProduct("iPhone 9", 549.0, 699.0, 12, 4.69, 94, "Electronics"),
@@ -83,9 +105,6 @@ fun HomeScreenMockup(
     }
 
     val categories = listOf("All", "Electronics", "Jewelry", "Men's Clothing", "Women's Clothing")
-    val filteredProducts = remember(selectedCategory, products) {
-        if (selectedCategory == "All") products else products.filter { it.category == selectedCategory }
-    }
 
     LaunchedEffect(Unit) {
         delay(900)
@@ -93,9 +112,7 @@ fun HomeScreenMockup(
     }
 
     val refreshProducts: () -> Unit = {
-        if (!isRefreshing) {
-            isRefreshing = true
-        }
+        if (!isRefreshing) isRefreshing = true
     }
 
     LaunchedEffect(isRefreshing) {
@@ -112,20 +129,15 @@ fun HomeScreenMockup(
             .background(BackgroundColor)
             .windowInsetsPadding(WindowInsets.systemBars)
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            // Glassmorphic Header
+        Column(modifier = Modifier.fillMaxSize()) {
             GlassmorphicHeader(
                 cartItemCount = cartItemCount,
                 onSearchClick = onSearchClick,
                 onCartClick = onCartClick
             )
 
-            // Hero Banner
             HeroBanner()
 
-            // Category Chips
             Spacer(modifier = Modifier.height(Spacing.lg))
             CategoryChipsRow(
                 categories = categories,
@@ -148,9 +160,13 @@ fun HomeScreenMockup(
                         targetState = selectedCategory,
                         transitionSpec = { fadeIn(tween(180)) with fadeOut(tween(180)) },
                         label = "category_layout_transition"
-                    ) { _ ->
+                    ) { targetCategory ->
                         ProductGridWithAnimation(
-                            products = filteredProducts,
+                            products = if (targetCategory == "All") {
+                                products
+                            } else {
+                                products.filter { it.category == targetCategory }
+                            },
                             modifier = Modifier.fillMaxSize(),
                             onProductClick = onProductClick
                         )
@@ -159,7 +175,6 @@ fun HomeScreenMockup(
             }
         }
 
-        // Fixed Bottom Navigation
         BottomNavigationBar(
             selectedItem = selectedNavItem,
             cartItemCount = cartItemCount,
@@ -204,9 +219,7 @@ private fun PullToRefreshStrip(
                         }
                     },
                     onDragEnd = {
-                        if (!isRefreshing && progress > 0.85f) {
-                            onRefresh()
-                        }
+                        if (!isRefreshing && progress > 0.85f) onRefresh()
                         dragDistance = 0f
                     },
                     onDragCancel = { dragDistance = 0f }
@@ -250,9 +263,6 @@ private fun PullToRefreshStrip(
     }
 }
 
-/**
- * Glassmorphic Header Component
- */
 @Composable
 fun GlassmorphicHeader(
     cartItemCount: Int,
@@ -266,9 +276,7 @@ fun GlassmorphicHeader(
         color = Color.White.copy(alpha = 0.8f),
         shadowElevation = 0.dp
     ) {
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
+        Box(modifier = Modifier.fillMaxSize()) {
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -283,9 +291,7 @@ fun GlassmorphicHeader(
                     color = PrimaryColor
                 )
 
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
-                ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
                     IconButton(onClick = onSearchClick) {
                         Icon(
                             imageVector = Icons.Filled.Search,
@@ -323,37 +329,26 @@ fun GlassmorphicHeader(
     }
 }
 
-/**
- * Hero Banner Component
- */
 @Composable
 fun HeroBanner() {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(180.dp)
-            .background(
-                brush = CommerceXGradients.heroGradient
-            )
+            .background(brush = CommerceXGradients.heroGradient)
     ) {
         Box(
             modifier = Modifier
                 .size(120.dp)
                 .offset(x = (-20).dp, y = 20.dp)
-                .background(
-                    color = Color.White.copy(alpha = 0.1f),
-                    shape = CircleShape
-                )
+                .background(color = Color.White.copy(alpha = 0.1f), shape = CircleShape)
         )
 
         Box(
             modifier = Modifier
                 .size(80.dp)
                 .offset(x = 320.dp, y = 100.dp)
-                .background(
-                    color = Color.White.copy(alpha = 0.15f),
-                    shape = CircleShape
-                )
+                .background(color = Color.White.copy(alpha = 0.15f), shape = CircleShape)
         )
 
         Column(
@@ -381,9 +376,6 @@ fun HeroBanner() {
     }
 }
 
-/**
- * Product Grid with Staggered Fade-Up Animation
- */
 @Composable
 fun ProductGridWithAnimation(
     products: List<MockProduct>,
@@ -409,9 +401,6 @@ fun ProductGridWithAnimation(
     }
 }
 
-/**
- * Animated Product Card with staggered entrance
- */
 @Composable
 fun AnimatedProductCard(
     product: MockProduct,
@@ -421,7 +410,7 @@ fun AnimatedProductCard(
     var isVisible by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        kotlinx.coroutines.delay(index * 50L)
+        delay(index * 50L)
         isVisible = true
     }
 
@@ -454,15 +443,12 @@ fun AnimatedProductCard(
             rating = product.rating,
             reviewCount = product.reviewCount,
             isWishlisted = false,
-            onWishlistClick = { /* Wishlist action */ },
+            onWishlistClick = { },
             onClick = onClick
         )
     }
 }
 
-/**
- * Mock Product Data Class
- */
 data class MockProduct(
     val title: String,
     val price: Double,
