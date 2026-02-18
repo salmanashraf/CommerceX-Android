@@ -21,7 +21,7 @@ import com.sa.feature.auth.ui.LoginScreenMockup
 import com.sa.feature.auth.ui.ProfileScreenMockup
 import com.sa.feature.product.ui.ProductDetailRoute
 import com.sa.feature.product.ui.ProductListRoute
-import com.sa.feature.search.ui.SearchScreenDefaultMockup
+import com.sa.feature.search.ui.SearchRoute
 import com.sa.core.ui.theme.CommerceXTheme
 
 /**
@@ -67,8 +67,12 @@ class MainActivity : ComponentActivity() {
                                 onBackClick = { currentScreen = AppScreen.HOME },
                                 onLogoutClick = { currentScreen = AppScreen.LOGIN }
                             )
-                            AppScreen.SEARCH -> SearchScreenDefaultMockup(
-                                onBackClick = { currentScreen = AppScreen.HOME }
+                            AppScreen.SEARCH -> SearchRoute(
+                                onBackClick = { currentScreen = AppScreen.HOME },
+                                onProductClick = { productId ->
+                                    selectedProductId = productId
+                                    currentScreen = AppScreen.PRODUCT_DETAIL
+                                }
                             )
                             AppScreen.CART -> CartScreenMockup(
                                 onBackClick = { currentScreen = AppScreen.HOME }
