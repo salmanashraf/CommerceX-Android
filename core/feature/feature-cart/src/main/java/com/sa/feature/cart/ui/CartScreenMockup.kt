@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sa.core.ui.component.CartItemCard
+import com.sa.core.ui.component.EmptyCartState
 import com.sa.core.ui.component.OrderSummary
 import com.sa.core.ui.component.PrimaryButton
 import com.sa.core.ui.component.SimpleTopAppBar
@@ -134,50 +135,10 @@ fun CartScreenEmptyMockup() {
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = Spacing.lg),
-            horizontalAlignment = Alignment.CenterHorizontally,
+                .fillMaxSize(),
             verticalArrangement = Arrangement.Center
         ) {
-            Box(
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(CircleShape)
-                    .background(SurfaceVariant),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.ShoppingCart,
-                    contentDescription = "Empty cart",
-                    tint = TextSecondaryColor,
-                    modifier = Modifier.size(48.dp)
-                )
-            }
-
-            Spacer(modifier = Modifier.height(Spacing.lg))
-
-            Text(
-                text = "Your cart is empty",
-                style = MaterialTheme.typography.titleLarge,
-                color = TextPrimaryColor,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(Spacing.sm))
-
-            Text(
-                text = "Looks like you have not added anything yet.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = TextSecondaryColor,
-                textAlign = TextAlign.Center
-            )
-
-            Spacer(modifier = Modifier.height(Spacing.lg))
-
-            PrimaryButton(
-                text = "Start Shopping",
-                onClick = { /* Navigate to home */ }
-            )
+            EmptyCartState(onStartShopping = { /* Navigate to home */ })
         }
     }
 }
@@ -215,4 +176,3 @@ private data class CartMockItem(
     val price: Double,
     val quantity: Int
 )
-

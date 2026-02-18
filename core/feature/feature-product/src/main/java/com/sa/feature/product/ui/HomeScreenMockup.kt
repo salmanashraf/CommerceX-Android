@@ -43,12 +43,32 @@ fun HomeScreenLightPreview() {
     }
 }
 
+@Preview(
+    name = "Home Screen - Loading State",
+    showBackground = true,
+    widthDp = 448,
+    heightDp = 900
+)
+@Composable
+fun HomeScreenLoadingPreview() {
+    CommerceXTheme {
+        HomeScreenMockup(
+            showLoadingState = true,
+            showPullToRefreshIndicator = true,
+            pullToRefreshProgress = 0.85f
+        )
+    }
+}
+
 @Composable
 fun HomeScreenMockup(
     onProductClick: () -> Unit = {},
     onCartClick: () -> Unit = {},
     onSearchClick: () -> Unit = {},
-    onProfileClick: () -> Unit = {}
+    onProfileClick: () -> Unit = {},
+    showLoadingState: Boolean = false,
+    showPullToRefreshIndicator: Boolean = false,
+    pullToRefreshProgress: Float = 0f
 ) {
     var selectedCategory by remember { mutableStateOf("All") }
     var cartItemCount by remember { mutableStateOf(3) }
@@ -99,12 +119,24 @@ fun HomeScreenMockup(
 
             Spacer(modifier = Modifier.height(Spacing.lg))
 
-            // Product Grid with staggered animation
-            ProductGridWithAnimation(
-                products = products,
-                modifier = Modifier.weight(1f),
-                onProductClick = onProductClick
-            )
+            if (showPullToRefreshIndicator) {
+                PullToRefreshIndicator(
+                    isRefreshing = false,
+                    progress = pullToRefreshProgress,
+                    modifier = Modifier.padding(horizontal = Spacing.lg)
+                )
+            }
+
+            if (showLoadingState) {
+                LoadingProductGridState(modifier = Modifier.weight(1f))
+            } else {
+                // Product Grid with staggered animation
+                ProductGridWithAnimation(
+                    products = products,
+                    modifier = Modifier.weight(1f),
+                    onProductClick = onProductClick
+                )
+            }
         }
 
         // Fixed Bottom Navigation

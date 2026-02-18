@@ -23,6 +23,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sa.core.ui.component.CategoryChip
+import com.sa.core.ui.component.NoSearchResultsState
 import com.sa.core.ui.component.ProductCard
 import com.sa.core.ui.component.SearchBar
 import com.sa.core.ui.theme.*
@@ -177,35 +178,10 @@ fun SearchScreenNoResultsMockup() {
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = Spacing.lg),
-            horizontalAlignment = Alignment.CenterHorizontally,
+                .fillMaxSize(),
             verticalArrangement = Arrangement.Center
         ) {
-            Icon(
-                imageVector = Icons.Filled.Search,
-                contentDescription = "No results",
-                tint = TextSecondaryColor,
-                modifier = Modifier.size(64.dp)
-            )
-
-            Spacer(modifier = Modifier.height(Spacing.lg))
-
-            Text(
-                text = "No results found",
-                style = MaterialTheme.typography.titleLarge,
-                color = TextPrimaryColor,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(Spacing.sm))
-
-            Text(
-                text = "Try a different keyword or check your spelling.",
-                style = MaterialTheme.typography.bodyMedium,
-                color = TextSecondaryColor,
-                textAlign = TextAlign.Center
-            )
+            NoSearchResultsState(query = "iphone")
         }
     }
 }
@@ -276,4 +252,3 @@ private data class MockSearchProduct(
     val rating: Double,
     val reviewCount: Int
 )
-
