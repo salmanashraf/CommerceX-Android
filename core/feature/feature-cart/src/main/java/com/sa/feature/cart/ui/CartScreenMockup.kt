@@ -66,10 +66,25 @@ fun CartScreenEmptyPreview() {
     }
 }
 
+@Preview(
+    name = "Cart Screen - Dark",
+    showBackground = true,
+    widthDp = 448,
+    heightDp = 900,
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+fun CartScreenDarkPreview() {
+    CommerceXTheme {
+        CartScreenMockup()
+    }
+}
+
 @Composable
 fun CartScreenMockup(
     onBackClick: () -> Unit = {}
 ) {
+    val colors = MaterialTheme.colorScheme
     val cartItems = remember {
         mutableStateListOf(
             CartMockItem(id = "1", title = "iPhone 9", price = 549.0, quantity = 1),
@@ -82,7 +97,7 @@ fun CartScreenMockup(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(colors.background)
             .windowInsetsPadding(WindowInsets.systemBars)
     ) {
         Column(
@@ -160,10 +175,11 @@ fun CartScreenMockup(
 
 @Composable
 fun CartScreenEmptyMockup() {
+    val colors = MaterialTheme.colorScheme
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(colors.background)
             .windowInsetsPadding(WindowInsets.systemBars)
     ) {
         Column(
@@ -181,9 +197,10 @@ private fun CartSummaryBar(
     subtotal: Double,
     modifier: Modifier = Modifier
 ) {
+    val colors = MaterialTheme.colorScheme
     Surface(
         modifier = modifier.fillMaxWidth(),
-        color = SurfaceColor,
+        color = colors.surface,
         tonalElevation = CommerceXElevation.level3,
         shadowElevation = CommerceXElevation.level3
     ) {

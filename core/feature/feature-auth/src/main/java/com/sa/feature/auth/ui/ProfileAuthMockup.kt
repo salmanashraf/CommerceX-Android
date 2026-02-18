@@ -84,15 +84,44 @@ fun LoginScreenPreview() {
     }
 }
 
+@Preview(
+    name = "Profile Screen - Dark",
+    showBackground = true,
+    widthDp = 448,
+    heightDp = 900,
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+fun ProfileScreenDarkPreview() {
+    CommerceXTheme {
+        ProfileScreenMockup()
+    }
+}
+
+@Preview(
+    name = "Login Screen - Dark",
+    showBackground = true,
+    widthDp = 448,
+    heightDp = 900,
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+fun LoginScreenDarkPreview() {
+    CommerceXTheme {
+        LoginScreenMockup()
+    }
+}
+
 @Composable
 fun ProfileScreenMockup(
     onBackClick: () -> Unit = {},
     onLogoutClick: () -> Unit = {}
 ) {
+    val colors = MaterialTheme.colorScheme
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(colors.background)
             .statusBarsPadding()
     ) {
         Column(
@@ -145,7 +174,7 @@ fun ProfileScreenMockup(
 
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                color = SurfaceColor,
+                color = colors.surface,
                 shape = MaterialTheme.shapes.large
             ) {
                 Column {
@@ -200,6 +229,7 @@ fun ProfileScreenMockup(
 fun LoginScreenMockup(
     onSignInClick: () -> Unit = {}
 ) {
+    val colors = MaterialTheme.colorScheme
     var username by remember { mutableStateOf("emma.johnson") }
     var password by remember { mutableStateOf("password123") }
     var showPassword by remember { mutableStateOf(false) }
@@ -207,7 +237,7 @@ fun LoginScreenMockup(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(colors.background)
             .statusBarsPadding()
     ) {
         Column(
@@ -387,6 +417,7 @@ private fun PasswordInput(
     isVisible: Boolean,
     onVisibilityToggle: () -> Unit
 ) {
+    val colors = MaterialTheme.colorScheme
     Column {
         Text(
             text = "Password",
@@ -400,7 +431,7 @@ private fun PasswordInput(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(56.dp)
-                .background(SurfaceColor, MaterialTheme.shapes.medium)
+                .background(colors.surface, MaterialTheme.shapes.medium)
                 .border(1.dp, BorderColor, MaterialTheme.shapes.medium)
                 .padding(horizontal = Spacing.lg),
             verticalAlignment = Alignment.CenterVertically
@@ -410,7 +441,7 @@ private fun PasswordInput(
                 onValueChange = onValueChange,
                 modifier = Modifier.weight(1f),
                 singleLine = true,
-                textStyle = MaterialTheme.typography.bodyLarge.copy(color = Color.Black),
+                textStyle = MaterialTheme.typography.bodyLarge.copy(color = colors.onSurface),
                 visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation()
             )
             IconButton(onClick = onVisibilityToggle) {
@@ -426,9 +457,10 @@ private fun PasswordInput(
 
 @Composable
 private fun SocialChip(label: String) {
+    val colors = MaterialTheme.colorScheme
     Surface(
         shape = MaterialTheme.shapes.medium,
-        color = SurfaceColor,
+        color = colors.surface,
         modifier = Modifier.border(1.dp, BorderColor, MaterialTheme.shapes.medium)
     ) {
         Row(

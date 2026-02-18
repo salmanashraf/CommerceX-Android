@@ -8,7 +8,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.with
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.*
@@ -85,6 +85,7 @@ fun HomeScreenMockup(
     onSearchClick: () -> Unit = {},
     onProfileClick: () -> Unit = {}
 ) {
+    val colors = MaterialTheme.colorScheme
     var selectedCategory by remember { mutableStateOf("All") }
     var cartItemCount by remember { mutableStateOf(3) }
     var selectedNavItem by remember { mutableStateOf<BottomNavItem>(BottomNavItem.HOME) }
@@ -126,7 +127,7 @@ fun HomeScreenMockup(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(colors.background)
             .windowInsetsPadding(WindowInsets.systemBars)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
@@ -158,7 +159,7 @@ fun HomeScreenMockup(
                 } else {
                     AnimatedContent(
                         targetState = selectedCategory,
-                        transitionSpec = { fadeIn(tween(180)) with fadeOut(tween(180)) },
+                        transitionSpec = { fadeIn(tween(180)).togetherWith(fadeOut(tween(180))) },
                         label = "category_layout_transition"
                     ) { targetCategory ->
                         ProductGridWithAnimation(
@@ -199,6 +200,7 @@ private fun PullToRefreshStrip(
     isRefreshing: Boolean,
     onRefresh: () -> Unit
 ) {
+    val colors = MaterialTheme.colorScheme
     var dragDistance by remember { mutableStateOf(0f) }
     val progress = (dragDistance / 150f).coerceIn(0f, 1f)
     val arrowRotation by animateFloatAsState(
@@ -239,7 +241,7 @@ private fun PullToRefreshStrip(
                 Text(
                     text = "Refreshing products...",
                     style = MaterialTheme.typography.labelLarge,
-                    color = TextSecondaryColor
+                    color = colors.onSurfaceVariant
                 )
             }
         } else {
@@ -250,13 +252,13 @@ private fun PullToRefreshStrip(
                 Icon(
                     imageVector = if (progress > 0.5f) Icons.Filled.Refresh else Icons.Filled.KeyboardArrowDown,
                     contentDescription = "Pull to refresh",
-                    tint = PrimaryColor,
+                    tint = colors.primary,
                     modifier = Modifier.graphicsLayer(rotationZ = arrowRotation)
                 )
                 Text(
                     text = if (progress > 0.85f) "Release to refresh" else "Pull down to refresh",
                     style = MaterialTheme.typography.labelLarge,
-                    color = TextSecondaryColor
+                    color = colors.onSurfaceVariant
                 )
             }
         }
@@ -269,11 +271,12 @@ fun GlassmorphicHeader(
     onSearchClick: () -> Unit,
     onCartClick: () -> Unit
 ) {
+    val colors = MaterialTheme.colorScheme
     Surface(
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp),
-        color = Color.White.copy(alpha = 0.8f),
+        color = colors.surface.copy(alpha = 0.88f),
         shadowElevation = 0.dp
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -288,7 +291,7 @@ fun GlassmorphicHeader(
                     text = "CommerceX",
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
-                    color = PrimaryColor
+                    color = colors.primary
                 )
 
                 Row(horizontalArrangement = Arrangement.spacedBy(Spacing.sm)) {
@@ -296,7 +299,7 @@ fun GlassmorphicHeader(
                         Icon(
                             imageVector = Icons.Filled.Search,
                             contentDescription = "Search",
-                            tint = TextPrimaryColor
+                            tint = colors.onSurface
                         )
                     }
 
@@ -305,7 +308,7 @@ fun GlassmorphicHeader(
                             Icon(
                                 imageVector = Icons.Filled.ShoppingCart,
                                 contentDescription = "Cart",
-                                tint = TextPrimaryColor
+                                tint = colors.onSurface
                             )
                         }
                         if (cartItemCount > 0) {
@@ -323,7 +326,7 @@ fun GlassmorphicHeader(
             HorizontalDivider(
                 modifier = Modifier.align(Alignment.BottomCenter),
                 thickness = 1.dp,
-                color = DividerColor
+                color = colors.outlineVariant
             )
         }
     }
