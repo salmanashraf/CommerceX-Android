@@ -1,5 +1,10 @@
 package com.sa.feature.cart.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -27,6 +32,7 @@ import com.sa.core.ui.component.OrderSummary
 import com.sa.core.ui.component.PrimaryButton
 import com.sa.core.ui.component.SimpleTopAppBar
 import com.sa.core.ui.theme.*
+import kotlinx.coroutines.delay
 
 /**
  * Cart Screen Mockup
@@ -64,12 +70,13 @@ fun CartScreenMockup(
     onBackClick: () -> Unit = {}
 ) {
     val cartItems = remember {
-        listOf(
-            CartMockItem("iPhone 9", 549.0, 1),
-            CartMockItem("MacBook Pro", 1749.0, 1),
-            CartMockItem("Brown Perfume", 40.0, 2)
+        mutableStateListOf(
+            CartMockItem(id = "1", title = "iPhone 9", price = 549.0, quantity = 1),
+            CartMockItem(id = "2", title = "MacBook Pro", price = 1749.0, quantity = 1),
+            CartMockItem(id = "3", title = "Brown Perfume", price = 40.0, quantity = 2)
         )
     }
+    val removingItemIds = remember { mutableStateListOf<String>() }
 
     Box(
         modifier = Modifier
@@ -103,14 +110,31 @@ fun CartScreenMockup(
 
             Column(verticalArrangement = Arrangement.spacedBy(Spacing.md)) {
                 cartItems.forEach { item ->
-                    CartItemCard(
-                        imageUrl = "https://cdn.dummyjson.com/products/1/thumbnail.jpg",
-                        title = item.title,
-                        price = item.price,
-                        quantity = item.quantity,
-                        onQuantityChange = { /* Quantity change */ },
-                        onDeleteClick = { /* Delete */ }
-                    )
+                    AnimatedVisibility(
+                        visible = !removingItemIds.contains(item.id),
+                        exit = slideOutHorizontally(
+                            animationSpec = tween(240),
+                            targetOffsetX = { -it }
+                        ) + fadeOut(animationSpec = tween(220)) + shrinkVertically(animationSpec = tween(220))
+                    ) {
+                        CartItemCard(
+                            imageUrl = "https://cdn.dummyjson.com/products/1/thumbnail.jpg",
+                            title = item.title,
+                            price = item.price,
+                            quantity = item.quantity,
+                            onQuantityChange = { newQty ->
+                                val index = cartItems.indexOfFirst { it.id == item.id }
+                                if (index >= 0) {
+                                    cartItems[index] = cartItems[index].copy(quantity = newQty)
+                                }
+                            },
+                            onDeleteClick = {
+                                if (!removingItemIds.contains(item.id)) {
+                                    removingItemIds.add(item.id)
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -121,6 +145,15 @@ fun CartScreenMockup(
                 .align(Alignment.BottomCenter)
                 .navigationBarsPadding()
         )
+    }
+
+    LaunchedEffect(removingItemIds.size) {
+        if (removingItemIds.isNotEmpty()) {
+            val id = removingItemIds.first()
+            delay(240)
+            cartItems.removeAll { it.id == id }
+            removingItemIds.remove(id)
+        }
     }
 }
 
@@ -211,8 +244,8 @@ private fun CartSummaryBar(
 }
 
 private data class CartMockItem(
+    val id: String,
     val title: String,
     val price: Double,
     val quantity: Int
 )
-

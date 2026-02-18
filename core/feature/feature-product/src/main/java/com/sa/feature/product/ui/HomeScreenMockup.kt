@@ -1,16 +1,24 @@
 package com.sa.feature.product.ui
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.with
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.*
@@ -18,12 +26,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sa.core.ui.component.*
 import com.sa.core.ui.theme.*
+import kotlinx.coroutines.delay
 
 /**
  * Home Screen Mockup - Light Mode
@@ -44,6 +55,7 @@ fun HomeScreenLightPreview() {
 }
 
 @Composable
+@OptIn(ExperimentalAnimationApi::class)
 fun HomeScreenMockup(
     onProductClick: () -> Unit = {},
     onCartClick: () -> Unit = {},
@@ -53,22 +65,46 @@ fun HomeScreenMockup(
     var selectedCategory by remember { mutableStateOf("All") }
     var cartItemCount by remember { mutableStateOf(3) }
     var selectedNavItem by remember { mutableStateOf<BottomNavItem>(BottomNavItem.HOME) }
+    var isRefreshing by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(true) }
 
     // Sample product data for mockup
     val products = remember {
         listOf(
-            MockProduct("iPhone 9", 549.0, 699.0, 12, 4.69, 94),
-            MockProduct("Samsung Universe", 1249.0, 1549.0, 19, 4.09, 36),
-            MockProduct("OPPOF19", 280.0, null, null, 4.3, 123),
-            MockProduct("Huawei P30", 499.0, 699.0, 28, 4.09, 258),
-            MockProduct("MacBook Pro", 1749.0, 1999.0, 12, 4.57, 70),
-            MockProduct("Samsung Galaxy", 899.0, null, null, 4.8, 145),
-            MockProduct("Perfume Oil", 13.0, null, null, 4.26, 65),
-            MockProduct("Brown Perfume", 40.0, 55.0, 27, 4.0, 52)
+            MockProduct("iPhone 9", 549.0, 699.0, 12, 4.69, 94, "Electronics"),
+            MockProduct("Samsung Universe", 1249.0, 1549.0, 19, 4.09, 36, "Electronics"),
+            MockProduct("OPPOF19", 280.0, null, null, 4.3, 123, "Electronics"),
+            MockProduct("Huawei P30", 499.0, 699.0, 28, 4.09, 258, "Electronics"),
+            MockProduct("MacBook Pro", 1749.0, 1999.0, 12, 4.57, 70, "Electronics"),
+            MockProduct("Samsung Galaxy", 899.0, null, null, 4.8, 145, "Electronics"),
+            MockProduct("Perfume Oil", 13.0, null, null, 4.26, 65, "Women's Clothing"),
+            MockProduct("Brown Perfume", 40.0, 55.0, 27, 4.0, 52, "Jewelry")
         )
     }
 
     val categories = listOf("All", "Electronics", "Jewelry", "Men's Clothing", "Women's Clothing")
+    val filteredProducts = remember(selectedCategory, products) {
+        if (selectedCategory == "All") products else products.filter { it.category == selectedCategory }
+    }
+
+    LaunchedEffect(Unit) {
+        delay(900)
+        isLoading = false
+    }
+
+    val refreshProducts: () -> Unit = {
+        if (!isRefreshing) {
+            isRefreshing = true
+        }
+    }
+
+    LaunchedEffect(isRefreshing) {
+        if (isRefreshing) {
+            delay(950)
+            cartItemCount += 1
+            isRefreshing = false
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -82,8 +118,8 @@ fun HomeScreenMockup(
             // Glassmorphic Header
             GlassmorphicHeader(
                 cartItemCount = cartItemCount,
-                onSearchClick = { /* Search action */ },
-                onCartClick = { /* Cart action */ }
+                onSearchClick = onSearchClick,
+                onCartClick = onCartClick
             )
 
             // Hero Banner
@@ -97,14 +133,30 @@ fun HomeScreenMockup(
                 onCategorySelected = { selectedCategory = it }
             )
 
+            PullToRefreshStrip(
+                isRefreshing = isRefreshing,
+                onRefresh = refreshProducts
+            )
+
             Spacer(modifier = Modifier.height(Spacing.lg))
 
-            // Product Grid with staggered animation
-            ProductGridWithAnimation(
-                products = products,
-                modifier = Modifier.weight(1f),
-                onProductClick = onProductClick
-            )
+            Box(modifier = Modifier.weight(1f)) {
+                if (isLoading) {
+                    ShimmerProductGrid(modifier = Modifier.fillMaxSize())
+                } else {
+                    AnimatedContent(
+                        targetState = selectedCategory,
+                        transitionSpec = { fadeIn(tween(180)) with fadeOut(tween(180)) },
+                        label = "category_layout_transition"
+                    ) { _ ->
+                        ProductGridWithAnimation(
+                            products = filteredProducts,
+                            modifier = Modifier.fillMaxSize(),
+                            onProductClick = onProductClick
+                        )
+                    }
+                }
+            }
         }
 
         // Fixed Bottom Navigation
@@ -124,6 +176,77 @@ fun HomeScreenMockup(
                 .align(Alignment.BottomCenter)
                 .navigationBarsPadding()
         )
+    }
+}
+
+@Composable
+private fun PullToRefreshStrip(
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit
+) {
+    var dragDistance by remember { mutableStateOf(0f) }
+    val progress = (dragDistance / 150f).coerceIn(0f, 1f)
+    val arrowRotation by animateFloatAsState(
+        targetValue = progress * 180f,
+        animationSpec = tween(durationMillis = 120),
+        label = "pull_arrow_rotation"
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Spacing.lg, vertical = Spacing.sm)
+            .pointerInput(isRefreshing) {
+                detectVerticalDragGestures(
+                    onVerticalDrag = { _, dragAmount ->
+                        if (!isRefreshing) {
+                            dragDistance = (dragDistance + dragAmount).coerceIn(0f, 180f)
+                        }
+                    },
+                    onDragEnd = {
+                        if (!isRefreshing && progress > 0.85f) {
+                            onRefresh()
+                        }
+                        dragDistance = 0f
+                    },
+                    onDragCancel = { dragDistance = 0f }
+                )
+            },
+        contentAlignment = Alignment.Center
+    ) {
+        if (isRefreshing) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(16.dp),
+                    strokeWidth = 2.dp
+                )
+                Text(
+                    text = "Refreshing products...",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = TextSecondaryColor
+                )
+            }
+        } else {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(Spacing.xs),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = if (progress > 0.5f) Icons.Filled.Refresh else Icons.Filled.KeyboardArrowDown,
+                    contentDescription = "Pull to refresh",
+                    tint = PrimaryColor,
+                    modifier = Modifier.graphicsLayer(rotationZ = arrowRotation)
+                )
+                Text(
+                    text = if (progress > 0.85f) "Release to refresh" else "Pull down to refresh",
+                    style = MaterialTheme.typography.labelLarge,
+                    color = TextSecondaryColor
+                )
+            }
+        }
     }
 }
 
@@ -346,5 +469,6 @@ data class MockProduct(
     val originalPrice: Double?,
     val discountPercent: Int?,
     val rating: Double,
-    val reviewCount: Int
+    val reviewCount: Int,
+    val category: String
 )
