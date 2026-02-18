@@ -4,6 +4,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -30,53 +37,49 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             CommerceXTheme {
-                var showProductDetail by remember { mutableStateOf(false) }
-                var showCart by remember { mutableStateOf(false) }
-                var showSearch by remember { mutableStateOf(false) }
-                var showProfile by remember { mutableStateOf(false) }
-                var showLogin by remember { mutableStateOf(false) }
+                var currentScreen by remember { mutableStateOf(AppScreen.HOME) }
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    when {
-                        showLogin -> {
-                            LoginScreenMockup(
-                                onSignInClick = {
-                                    showLogin = false
-                                    showProfile = true
-                                }
+                    AnimatedContent(
+                        targetState = currentScreen,
+                        transitionSpec = {
+                            (slideInHorizontally(
+                                initialOffsetX = { it / 3 },
+                                animationSpec = tween(260)
+                            ) + fadeIn(animationSpec = tween(260))).togetherWith(
+                                slideOutHorizontally(
+                                    targetOffsetX = { -it / 3 },
+                                    animationSpec = tween(220)
+                                ) + fadeOut(animationSpec = tween(220))
                             )
-                        }
-                        showProfile -> {
-                            ProfileScreenMockup(
-                                onBackClick = { showProfile = false },
-                                onLogoutClick = {
-                                    showProfile = false
-                                    showLogin = true
-                                }
+                        },
+                        label = "main_screen_transition"
+                    ) { screen ->
+                        when (screen) {
+                            AppScreen.LOGIN -> LoginScreenMockup(
+                                onSignInClick = { currentScreen = AppScreen.PROFILE }
                             )
-                        }
-                        showSearch -> {
-                            SearchScreenDefaultMockup()
-                        }
-                        showCart -> {
-                            CartScreenMockup(
-                                onBackClick = { showCart = false }
+                            AppScreen.PROFILE -> ProfileScreenMockup(
+                                onBackClick = { currentScreen = AppScreen.HOME },
+                                onLogoutClick = { currentScreen = AppScreen.LOGIN }
                             )
-                        }
-                        showProductDetail -> {
-                            ProductDetailMockup(
-                                onBackClick = { showProductDetail = false }
+                            AppScreen.SEARCH -> SearchScreenDefaultMockup(
+                                onBackClick = { currentScreen = AppScreen.HOME }
                             )
-                        }
-                        else -> {
-                            HomeScreenMockup(
-                                onProductClick = { showProductDetail = true },
-                                onCartClick = { showCart = true },
-                                onSearchClick = { showSearch = true },
-                                onProfileClick = { showProfile = true }
+                            AppScreen.CART -> CartScreenMockup(
+                                onBackClick = { currentScreen = AppScreen.HOME }
+                            )
+                            AppScreen.PRODUCT_DETAIL -> ProductDetailMockup(
+                                onBackClick = { currentScreen = AppScreen.HOME }
+                            )
+                            AppScreen.HOME -> HomeScreenMockup(
+                                onProductClick = { currentScreen = AppScreen.PRODUCT_DETAIL },
+                                onCartClick = { currentScreen = AppScreen.CART },
+                                onSearchClick = { currentScreen = AppScreen.SEARCH },
+                                onProfileClick = { currentScreen = AppScreen.PROFILE }
                             )
                         }
                     }
@@ -84,4 +87,13 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
+
+private enum class AppScreen {
+    HOME,
+    SEARCH,
+    CART,
+    PRODUCT_DETAIL,
+    PROFILE,
+    LOGIN
 }
