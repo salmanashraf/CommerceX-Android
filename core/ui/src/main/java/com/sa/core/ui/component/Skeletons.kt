@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,11 +53,12 @@ fun ShimmerProductGrid(
 @Composable
 private fun ShimmerProductCard() {
     val brush = rememberShimmerBrush()
+    val colors = MaterialTheme.colorScheme
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(Color.White)
+            .background(colors.surface)
             .padding(Spacing.md),
         verticalArrangement = Arrangement.spacedBy(Spacing.sm)
     ) {
@@ -92,6 +94,7 @@ private fun ShimmerProductCard() {
 
 @Composable
 private fun rememberShimmerBrush(): Brush {
+    val colors = MaterialTheme.colorScheme
     val transition = rememberInfiniteTransition(label = "shimmer_transition")
     val animatedProgress = transition.animateFloat(
         initialValue = 0f,
@@ -105,9 +108,9 @@ private fun rememberShimmerBrush(): Brush {
 
     return Brush.linearGradient(
         colors = listOf(
-            SurfaceVariant,
-            Color.White,
-            SurfaceVariant
+            colors.surfaceVariant,
+            colors.surface,
+            colors.surfaceVariant
         ),
         start = Offset(x = animatedProgress.value * 900f - 450f, y = 0f),
         end = Offset(x = animatedProgress.value * 900f, y = 280f)

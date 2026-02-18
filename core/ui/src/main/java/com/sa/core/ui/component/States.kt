@@ -206,12 +206,13 @@ fun LoadingProductGridState(
 @Composable
 private fun LoadingProductCard() {
     val shimmer = rememberShimmerBrush()
+    val colors = MaterialTheme.colorScheme
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .background(SurfaceColor)
+            .background(colors.surface)
             .padding(Spacing.md),
         verticalArrangement = Arrangement.spacedBy(Spacing.sm)
     ) {
@@ -241,6 +242,7 @@ private fun LoadingProductCard() {
 
 @Composable
 private fun rememberShimmerBrush(): Brush {
+    val colors = MaterialTheme.colorScheme
     val transition = rememberInfiniteTransition(label = "state_shimmer")
     val xProgress by transition.animateFloat(
         initialValue = 0f,
@@ -254,9 +256,9 @@ private fun rememberShimmerBrush(): Brush {
 
     return Brush.linearGradient(
         colors = listOf(
-            SurfaceVariant,
-            Color.White,
-            SurfaceVariant
+            colors.surfaceVariant,
+            colors.surface,
+            colors.surfaceVariant
         ),
         start = Offset(x = xProgress * 900f - 450f, y = 0f),
         end = Offset(x = xProgress * 900f, y = 280f)

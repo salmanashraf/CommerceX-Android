@@ -73,14 +73,29 @@ fun SearchScreenNoResultsPreview() {
     }
 }
 
+@Preview(
+    name = "Search - Dark",
+    showBackground = true,
+    widthDp = 448,
+    heightDp = 900,
+    uiMode = android.content.res.Configuration.UI_MODE_NIGHT_YES
+)
+@Composable
+fun SearchScreenDarkPreview() {
+    CommerceXTheme {
+        SearchScreenDefaultMockup()
+    }
+}
+
 @Composable
 fun SearchScreenDefaultMockup(
     onBackClick: () -> Unit = {}
 ) {
+    val colors = MaterialTheme.colorScheme
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(colors.background)
             .windowInsetsPadding(WindowInsets.systemBars)
     ) {
         Column(
@@ -117,6 +132,7 @@ fun SearchScreenDefaultMockup(
 
 @Composable
 fun SearchScreenResultsMockup() {
+    val colors = MaterialTheme.colorScheme
     val products = listOf(
         MockSearchProduct("iPhone 9", 549.0, 699.0, 12, 4.69, 94),
         MockSearchProduct("MacBook Pro", 1749.0, 1999.0, 12, 4.57, 70),
@@ -127,7 +143,7 @@ fun SearchScreenResultsMockup() {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(colors.background)
             .windowInsetsPadding(WindowInsets.systemBars)
     ) {
         Column(
@@ -173,10 +189,11 @@ fun SearchScreenResultsMockup() {
 
 @Composable
 fun SearchScreenNoResultsMockup() {
+    val colors = MaterialTheme.colorScheme
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
+            .background(colors.background)
             .windowInsetsPadding(WindowInsets.systemBars)
     ) {
         Column(
@@ -194,6 +211,7 @@ fun SearchScreenNoResultsMockup() {
 private fun SearchHeader(
     onBackClick: () -> Unit = {}
 ) {
+    val colors = MaterialTheme.colorScheme
     TopAppBar(
         title = {
             Text(
@@ -207,30 +225,32 @@ private fun SearchHeader(
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = "Back",
-                    tint = TextPrimaryColor
+                    tint = colors.onSurface
                 )
             }
         },
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = SurfaceColor,
-            titleContentColor = TextPrimaryColor,
-            navigationIconContentColor = TextPrimaryColor
+            containerColor = colors.surface,
+            titleContentColor = colors.onSurface,
+            navigationIconContentColor = colors.onSurface
         )
     )
 }
 
 @Composable
 private fun SectionTitle(text: String) {
+    val colors = MaterialTheme.colorScheme
     Text(
         text = text,
         style = MaterialTheme.typography.titleMedium,
-        color = TextPrimaryColor,
+        color = colors.onSurface,
         fontWeight = FontWeight.SemiBold
     )
 }
 
 @Composable
 private fun RecentSearchRow(text: String) {
+    val colors = MaterialTheme.colorScheme
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Spacing.sm)
@@ -238,13 +258,13 @@ private fun RecentSearchRow(text: String) {
         Icon(
             imageVector = Icons.Filled.Search,
             contentDescription = "Recent search",
-            tint = TextSecondaryColor,
+            tint = colors.onSurfaceVariant,
             modifier = Modifier.size(18.dp)
         )
         Text(
             text = text,
             style = MaterialTheme.typography.bodyMedium,
-            color = TextPrimaryColor
+            color = colors.onSurface
         )
     }
 }
