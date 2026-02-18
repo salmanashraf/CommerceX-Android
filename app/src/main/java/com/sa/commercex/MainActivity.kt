@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import com.sa.feature.cart.ui.CartScreenMockup
 import com.sa.feature.auth.ui.LoginScreenMockup
 import com.sa.feature.auth.ui.ProfileScreenMockup
-import com.sa.feature.product.ui.HomeScreenMockup
+import com.sa.feature.product.ui.ProductListRoute
 import com.sa.feature.product.ui.ProductDetailMockup
 import com.sa.feature.search.ui.SearchScreenDefaultMockup
 import com.sa.core.ui.theme.CommerceXTheme
@@ -75,8 +75,8 @@ class MainActivity : ComponentActivity() {
                             AppScreen.PRODUCT_DETAIL -> ProductDetailMockup(
                                 onBackClick = { currentScreen = AppScreen.HOME }
                             )
-                            AppScreen.HOME -> HomeScreenMockup(
-                                onProductClick = { currentScreen = AppScreen.PRODUCT_DETAIL },
+                            AppScreen.HOME -> ProductListRoute(
+                                onProductClick = { _ -> currentScreen = AppScreen.PRODUCT_DETAIL },
                                 onCartClick = { currentScreen = AppScreen.CART },
                                 onSearchClick = { currentScreen = AppScreen.SEARCH },
                                 onProfileClick = { currentScreen = AppScreen.PROFILE }

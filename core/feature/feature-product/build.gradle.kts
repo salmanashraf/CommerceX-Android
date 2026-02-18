@@ -34,6 +34,7 @@ android {
 
 dependencies {
 	implementation(project(":core:ui"))
+	implementation(project(":core:network"))
 	implementation(libs.androidx.core.ktx)
 	implementation(libs.androidx.lifecycle.runtime.ktx)
 	implementation(libs.androidx.activity.compose)
@@ -44,6 +45,12 @@ dependencies {
 	implementation(libs.androidx.compose.material3)
 	implementation(libs.androidx.compose.material.icons.extended)
 	implementation(libs.androidx.compose.animation.core)
+	implementation(libs.androidx.paging.runtime)
+	implementation(libs.androidx.paging.compose)
+	implementation(libs.lifecycle.viewmodel.compose)
+	implementation(libs.koin.android)
+	implementation(libs.koin.compose)
+	implementation(libs.retrofit)
 	implementation(libs.coil.compose)
 	testImplementation(libs.junit)
 	androidTestImplementation(libs.androidx.junit)
@@ -53,4 +60,3 @@ dependencies {
 	debugImplementation(libs.androidx.compose.ui.tooling)
 	debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
-

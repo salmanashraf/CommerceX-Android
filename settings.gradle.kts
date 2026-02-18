@@ -22,6 +22,7 @@ dependencyResolutionManagement {
 rootProject.name = "CommerceX"
 include(":app")
 include(":core:ui")
+include(":core:network")
 include(":core:feature:feature-product")
 include(":core:feature:feature-cart")
 include(":core:feature:feature-search")

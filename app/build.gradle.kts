@@ -40,6 +40,7 @@ android {
 
 dependencies {
 	implementation(project(":core:ui"))
+	implementation(project(":core:network"))
 	implementation(project(":core:feature:feature-product"))
 	implementation(project(":core:feature:feature-cart"))
 	implementation(project(":core:feature:feature-search"))
@@ -52,6 +53,8 @@ dependencies {
 	implementation(libs.androidx.compose.material3)
 	implementation(libs.androidx.appcompat)
 	implementation(libs.material)
+	implementation(libs.koin.android)
+	implementation(libs.koin.compose)
 	testImplementation(libs.junit)
 	androidTestImplementation(libs.androidx.junit)
 	androidTestImplementation(libs.androidx.espresso.core)

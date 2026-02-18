@@ -27,6 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Inventory2
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
@@ -89,6 +90,21 @@ fun NoSearchResultsState(
         iconContainerColor = SurfaceVariant,
         title = "No results found",
         message = "No products matched \"$query\". Try a different keyword."
+    )
+}
+
+@Composable
+fun NoProductsAvailableState(
+    onRefresh: () -> Unit = {}
+) {
+    StateContent(
+        icon = Icons.Filled.Inventory2,
+        iconTint = TextSecondaryColor,
+        iconContainerColor = SurfaceVariant,
+        title = "No products available",
+        message = "There are no products to show right now.",
+        primaryAction = "Refresh",
+        onPrimaryAction = onRefresh
     )
 }
 
