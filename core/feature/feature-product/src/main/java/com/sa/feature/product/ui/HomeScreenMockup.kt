@@ -47,7 +47,8 @@ fun HomeScreenLightPreview() {
 fun HomeScreenMockup(
     onProductClick: () -> Unit = {},
     onCartClick: () -> Unit = {},
-    onSearchClick: () -> Unit = {}
+    onSearchClick: () -> Unit = {},
+    onProfileClick: () -> Unit = {}
 ) {
     var selectedCategory by remember { mutableStateOf("All") }
     var cartItemCount by remember { mutableStateOf(3) }
@@ -115,6 +116,7 @@ fun HomeScreenMockup(
                 when (item) {
                     BottomNavItem.CART -> onCartClick()
                     BottomNavItem.SEARCH -> onSearchClick()
+                    BottomNavItem.PROFILE -> onProfileClick()
                     else -> Unit
                 }
             },
