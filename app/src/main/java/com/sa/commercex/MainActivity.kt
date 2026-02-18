@@ -19,8 +19,8 @@ import androidx.compose.ui.Modifier
 import com.sa.feature.cart.ui.CartScreenMockup
 import com.sa.feature.auth.ui.LoginScreenMockup
 import com.sa.feature.auth.ui.ProfileScreenMockup
+import com.sa.feature.product.ui.ProductDetailRoute
 import com.sa.feature.product.ui.ProductListRoute
-import com.sa.feature.product.ui.ProductDetailMockup
 import com.sa.feature.search.ui.SearchScreenDefaultMockup
 import com.sa.core.ui.theme.CommerceXTheme
 
@@ -38,6 +38,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             CommerceXTheme {
                 var currentScreen by remember { mutableStateOf(AppScreen.HOME) }
+                var selectedProductId by remember { mutableStateOf(1) }
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -72,11 +73,15 @@ class MainActivity : ComponentActivity() {
                             AppScreen.CART -> CartScreenMockup(
                                 onBackClick = { currentScreen = AppScreen.HOME }
                             )
-                            AppScreen.PRODUCT_DETAIL -> ProductDetailMockup(
+                            AppScreen.PRODUCT_DETAIL -> ProductDetailRoute(
+                                productId = selectedProductId,
                                 onBackClick = { currentScreen = AppScreen.HOME }
                             )
                             AppScreen.HOME -> ProductListRoute(
-                                onProductClick = { _ -> currentScreen = AppScreen.PRODUCT_DETAIL },
+                                onProductClick = { productId ->
+                                    selectedProductId = productId
+                                    currentScreen = AppScreen.PRODUCT_DETAIL
+                                },
                                 onCartClick = { currentScreen = AppScreen.CART },
                                 onSearchClick = { currentScreen = AppScreen.SEARCH },
                                 onProfileClick = { currentScreen = AppScreen.PROFILE }

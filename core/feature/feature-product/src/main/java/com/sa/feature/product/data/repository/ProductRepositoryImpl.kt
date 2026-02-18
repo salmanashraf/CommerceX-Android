@@ -5,7 +5,9 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.sa.feature.product.data.remote.ProductApiService
 import com.sa.feature.product.data.remote.ProductPagingSource
+import com.sa.feature.product.data.remote.toDomainModel
 import com.sa.feature.product.domain.model.Product
+import com.sa.feature.product.domain.model.ProductDetail
 import com.sa.feature.product.domain.repository.ProductRepository
 import kotlinx.coroutines.flow.Flow
 
@@ -24,5 +26,9 @@ class ProductRepositoryImpl(
             ),
             pagingSourceFactory = { ProductPagingSource(apiService) }
         ).flow
+    }
+
+    override suspend fun getProductDetail(productId: Int): ProductDetail {
+        return apiService.getProductDetail(productId).toDomainModel()
     }
 }

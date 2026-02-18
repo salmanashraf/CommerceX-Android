@@ -1,6 +1,7 @@
 package com.sa.feature.product.data.remote
 
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface ProductApiService {
@@ -9,4 +10,9 @@ interface ProductApiService {
         @Query("limit") limit: Int,
         @Query("skip") skip: Int
     ): ProductsResponse
+
+    @GET("products/{id}")
+    suspend fun getProductDetail(
+        @Path("id") productId: Int
+    ): NetworkProductDetail
 }
