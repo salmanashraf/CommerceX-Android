@@ -2,6 +2,7 @@ package com.sa.commercex
 
 import android.app.Application
 import com.sa.core.network.di.networkModule
+import com.sa.feature.auth.di.authModule
 import com.sa.feature.cart.di.cartModule
 import com.sa.feature.product.di.productModule
 import com.sa.feature.search.di.searchModule
@@ -13,7 +14,7 @@ class CommerceXApp : Application() {
         super.onCreate()
         startKoin {
             androidContext(this@CommerceXApp)
-            modules(networkModule, cartModule, productModule, searchModule)
+            modules(networkModule, authModule, cartModule, productModule, searchModule)
         }
     }
 }

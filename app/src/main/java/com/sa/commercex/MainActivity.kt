@@ -17,8 +17,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.sa.feature.cart.ui.CartRoute
-import com.sa.feature.auth.ui.LoginScreenMockup
-import com.sa.feature.auth.ui.ProfileScreenMockup
+import com.sa.feature.auth.ui.LoginRoute
+import com.sa.feature.auth.ui.ProfileRoute
 import com.sa.feature.product.ui.ProductDetailRoute
 import com.sa.feature.product.ui.ProductListRoute
 import com.sa.feature.search.ui.SearchRoute
@@ -39,6 +39,7 @@ class MainActivity : ComponentActivity() {
             CommerceXTheme {
                 var currentScreen by remember { mutableStateOf(AppScreen.HOME) }
                 var selectedProductId by remember { mutableStateOf(1) }
+                var postLoginDestination by remember { mutableStateOf(AppScreen.HOME) }
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -60,12 +61,17 @@ class MainActivity : ComponentActivity() {
                         label = "main_screen_transition"
                     ) { screen ->
                         when (screen) {
-                            AppScreen.LOGIN -> LoginScreenMockup(
-                                onSignInClick = { currentScreen = AppScreen.PROFILE }
-                            )
-                            AppScreen.PROFILE -> ProfileScreenMockup(
+                            AppScreen.LOGIN -> LoginRoute(
                                 onBackClick = { currentScreen = AppScreen.HOME },
-                                onLogoutClick = { currentScreen = AppScreen.LOGIN }
+                                onLoginSuccess = { currentScreen = postLoginDestination }
+                            )
+                            AppScreen.PROFILE -> ProfileRoute(
+                                onBackClick = { currentScreen = AppScreen.HOME },
+                                onLoginClick = {
+                                    postLoginDestination = AppScreen.PROFILE
+                                    currentScreen = AppScreen.LOGIN
+                                },
+                                onLoggedOut = { currentScreen = AppScreen.HOME }
                             )
                             AppScreen.SEARCH -> SearchRoute(
                                 onBackClick = { currentScreen = AppScreen.HOME },
