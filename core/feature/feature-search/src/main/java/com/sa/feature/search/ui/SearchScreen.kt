@@ -19,8 +19,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import com.sa.core.ui.component.CategoryChipsRow
 import com.sa.core.ui.component.GenericErrorState
 import com.sa.core.ui.component.LoadingProductGridState
+import com.sa.core.ui.component.NoProductsAvailableState
 import com.sa.core.ui.component.NoSearchResultsState
 import com.sa.core.ui.component.ProductCard
 import com.sa.core.ui.component.SearchBar
@@ -56,6 +58,13 @@ fun SearchRoute(
             modifier = Modifier.padding(horizontal = Spacing.lg)
         )
 
+        CategoryChipsRow(
+            categories = uiState.categories,
+            selectedCategory = uiState.selectedCategory,
+            onCategorySelected = viewModel::onCategorySelected,
+            modifier = Modifier.padding(top = Spacing.md)
+        )
+
         when {
             uiState.errorMessage != null -> {
                 Box(
@@ -76,6 +85,15 @@ fun SearchRoute(
                     contentAlignment = Alignment.Center
                 ) {
                     NoSearchResultsState(query = uiState.query)
+                }
+            }
+
+            uiState.results.isEmpty() -> {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    NoProductsAvailableState()
                 }
             }
 

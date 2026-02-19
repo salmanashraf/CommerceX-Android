@@ -6,17 +6,30 @@ import com.sa.feature.search.domain.model.SearchProduct
 import com.sa.feature.search.domain.repository.SearchRepository
 
 private const val DEFAULT_LIMIT = 30
+private const val ALL_CATEGORY = "All"
 
 class SearchRepositoryImpl(
     private val apiService: SearchApiService
 ) : SearchRepository {
 
-    override suspend fun searchProducts(query: String): List<SearchProduct> {
-        val response = if (query.isBlank()) {
-            apiService.getProducts(limit = DEFAULT_LIMIT, skip = 0)
-        } else {
-            apiService.searchProducts(query = query)
+    override suspend fun getCategories(): List<String> {
+        return listOf(ALL_CATEGORY) + apiService.getCategories()
+    }
+
+    override suspend fun searchProducts(query: String, category: String): List<SearchProduct> {
+        val response = when {
+            query.isBlank() && category == ALL_CATEGORY -> {
+                apiService.getProducts(limit = DEFAULT_LIMIT, skip = 0)
+            }
+            query.isBlank() && category != ALL_CATEGORY -> {
+                apiService.getProductsByCategory(category = category)
+            }
+            else -> {
+                apiService.searchProducts(query = query)
+            }
         }
-        return response.products.map { it.toDomainModel() }
+
+        val mapped = response.products.map { it.toDomainModel() }
+        return if (category == ALL_CATEGORY) mapped else mapped.filter { it.category == category }
     }
 }

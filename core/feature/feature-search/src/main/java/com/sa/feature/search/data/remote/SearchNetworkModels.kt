@@ -15,6 +15,7 @@ data class NetworkSearchProduct(
     val price: Double,
     val rating: Double,
     val thumbnail: String,
+    val category: String,
     val discountPercentage: Double,
     val stock: Int
 )
@@ -25,6 +26,7 @@ fun NetworkSearchProduct.toDomainModel(): SearchProduct = SearchProduct(
     price = price,
     rating = rating,
     thumbnailUrl = thumbnail,
+    category = category,
     discountPercent = discountPercentage,
     reviewCount = stock
 )

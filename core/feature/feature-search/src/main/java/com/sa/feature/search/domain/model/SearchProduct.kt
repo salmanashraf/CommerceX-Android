@@ -6,6 +6,7 @@ data class SearchProduct(
     val price: Double,
     val rating: Double,
     val thumbnailUrl: String,
+    val category: String,
     val discountPercent: Double,
     val reviewCount: Int
 )
