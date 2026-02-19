@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -15,8 +16,11 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -35,9 +39,12 @@ import com.sa.core.ui.component.GlassmorphicAppBar
 import com.sa.core.ui.component.LoadingProductGridState
 import com.sa.core.ui.component.NoProductsAvailableState
 import com.sa.core.ui.component.ProductCard
+import com.sa.core.ui.theme.ErrorColor
 import com.sa.core.ui.theme.CommerceXTheme
+import com.sa.core.ui.theme.Spacing
 import org.koin.androidx.compose.koinViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductListRoute(
     onProductClick: (Int) -> Unit = {},
@@ -48,10 +55,13 @@ fun ProductListRoute(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val products = viewModel.products.collectAsLazyPagingItems()
+    val refreshState = products.loadState.refresh
 
-    val isInitialLoading = products.loadState.refresh is LoadState.Loading
-    val isError = products.loadState.refresh is LoadState.Error
-    val isEmpty = products.loadState.refresh is LoadState.NotLoading && products.itemCount == 0
+    val isInitialLoading = refreshState is LoadState.Loading && products.itemCount == 0
+    val isInitialError = refreshState is LoadState.Error && products.itemCount == 0
+    val isRefreshing = refreshState is LoadState.Loading && products.itemCount > 0
+    val isRefreshError = refreshState is LoadState.Error && products.itemCount > 0
+    val isEmpty = refreshState is LoadState.NotLoading && products.itemCount == 0
 
     Box(
         modifier = Modifier
@@ -67,58 +77,72 @@ fun ProductListRoute(
                 onCartClick = onCartClick
             )
 
-            when {
-                isInitialLoading -> {
-                    LoadingProductGridState(modifier = Modifier.weight(1f))
-                }
-
-                isError -> {
-                    Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                        GenericErrorState(onRetry = { products.retry() })
+            PullToRefreshBox(
+                isRefreshing = isRefreshing,
+                onRefresh = { products.refresh() },
+                modifier = Modifier.weight(1f)
+            ) {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    if (isRefreshError) {
+                        RefreshErrorBanner(
+                            onRetry = { products.refresh() }
+                        )
                     }
-                }
 
-                isEmpty -> {
-                    Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                        NoProductsAvailableState(onRefresh = { products.refresh() })
-                    }
-                }
-
-                else -> {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                            .padding(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                        contentPadding = PaddingValues(top = 12.dp, bottom = 88.dp)
-                    ) {
-                        items(
-                            count = products.itemCount,
-                            key = products.itemKey { it.id }
-                        ) { index ->
-                            val item = products[index] ?: return@items
-                            ProductCard(
-                                imageUrl = item.thumbnailUrl,
-                                title = item.title,
-                                price = item.price,
-                                rating = item.rating,
-                                reviewCount = 0,
-                                onClick = { onProductClick(item.id) }
-                            )
+                    when {
+                        isInitialLoading -> {
+                            LoadingProductGridState(modifier = Modifier.fillMaxSize())
                         }
 
-                        if (products.loadState.append is LoadState.Loading) {
-                            item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) }) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 16.dp),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                        isInitialError -> {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                GenericErrorState(onRetry = { products.retry() })
+                            }
+                        }
+
+                        isEmpty -> {
+                            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                                NoProductsAvailableState(onRefresh = { products.refresh() })
+                            }
+                        }
+
+                        else -> {
+                            LazyVerticalGrid(
+                                columns = GridCells.Fixed(2),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f)
+                                    .padding(horizontal = 16.dp),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                verticalArrangement = Arrangement.spacedBy(16.dp),
+                                contentPadding = PaddingValues(top = 12.dp, bottom = 88.dp)
+                            ) {
+                                items(
+                                    count = products.itemCount,
+                                    key = products.itemKey { it.id }
+                                ) { index ->
+                                    val item = products[index] ?: return@items
+                                    ProductCard(
+                                        imageUrl = item.thumbnailUrl,
+                                        title = item.title,
+                                        price = item.price,
+                                        rating = item.rating,
+                                        reviewCount = 0,
+                                        onClick = { onProductClick(item.id) }
+                                    )
+                                }
+
+                                if (products.loadState.append is LoadState.Loading) {
+                                    item(span = { androidx.compose.foundation.lazy.grid.GridItemSpan(maxLineSpan) }) {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .padding(vertical = 16.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -142,6 +166,29 @@ fun ProductListRoute(
                 .align(Alignment.BottomCenter)
                 .navigationBarsPadding()
         )
+    }
+}
+
+@Composable
+private fun RefreshErrorBanner(
+    onRetry: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = Spacing.lg, vertical = Spacing.sm),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(
+            text = "Refresh failed. Check connection and retry.",
+            style = MaterialTheme.typography.labelLarge,
+            color = ErrorColor,
+            modifier = Modifier.weight(1f)
+        )
+        TextButton(onClick = onRetry) {
+            Text(text = "Retry")
+        }
     }
 }
 

@@ -8,8 +8,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.BlurredEdgeTreatment
-import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
@@ -43,9 +41,7 @@ fun GlassmorphicAppBar(
         shadowElevation = 0.dp
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .blur(radius = 20.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
+            modifier = Modifier.fillMaxSize()
         ) {
             Row(
                 modifier = Modifier
@@ -59,9 +55,7 @@ fun GlassmorphicAppBar(
                     text = title,
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.background(
-                        brush = CommerceXGradients.primaryGradient
-                    )
+                    color = PrimaryColor
                 )
 
                 Row(
@@ -215,4 +209,3 @@ fun SimpleTopAppBar(
         )
     )
 }
-
