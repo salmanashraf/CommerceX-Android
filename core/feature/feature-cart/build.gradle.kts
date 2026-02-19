@@ -36,6 +36,7 @@ dependencies {
 	implementation(project(":core:ui"))
 	implementation(libs.androidx.core.ktx)
 	implementation(libs.androidx.lifecycle.runtime.ktx)
+	implementation(libs.lifecycle.viewmodel.compose)
 	implementation(libs.androidx.activity.compose)
 	implementation(platform(libs.androidx.compose.bom))
 	implementation(libs.androidx.compose.ui)
@@ -45,6 +46,11 @@ dependencies {
 	implementation(libs.androidx.compose.material.icons.extended)
 	implementation(libs.androidx.compose.animation.core)
 	implementation(libs.coil.compose)
+	implementation(libs.koin.android)
+	implementation(libs.koin.compose)
+	implementation(libs.androidx.room.runtime)
+	implementation(libs.androidx.room.ktx)
+	annotationProcessor(libs.androidx.room.compiler)
 	testImplementation(libs.junit)
 	androidTestImplementation(libs.androidx.junit)
 	androidTestImplementation(libs.androidx.espresso.core)
@@ -53,4 +59,3 @@ dependencies {
 	debugImplementation(libs.androidx.compose.ui.tooling)
 	debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
-

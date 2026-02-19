@@ -7,10 +7,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import coil.compose.rememberAsyncImagePainter
 import com.sa.core.ui.theme.*
 
 /**
@@ -30,10 +33,13 @@ fun CartItemCard(
     title: String,
     price: Double,
     quantity: Int,
+    originalPrice: Double? = null,
+    discountPercent: Double = 0.0,
     onQuantityChange: (Int) -> Unit,
     onDeleteClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val subtotal = price * quantity
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = CustomShapes.md,
@@ -50,17 +56,18 @@ fun CartItemCard(
                 .padding(Spacing.md),
             horizontalArrangement = Arrangement.spacedBy(Spacing.md)
         ) {
-            // Product Thumbnail (80px square) - Placeholder for now
-            Box(
+            // Product Thumbnail (80px square)
+            Surface(
                 modifier = Modifier
                     .size(80.dp)
                     .clip(CustomShapes.sm)
-                    .background(SurfaceVariant),
-                contentAlignment = Alignment.Center
+                    .background(SurfaceVariant)
             ) {
-                Text(
-                    text = "📦",
-                    style = MaterialTheme.typography.headlineMedium
+                androidx.compose.foundation.Image(
+                    painter = rememberAsyncImagePainter(imageUrl),
+                    contentDescription = title,
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop
                 )
             }
 
@@ -83,12 +90,41 @@ fun CartItemCard(
 
                 Spacer(modifier = Modifier.height(Spacing.xs))
 
-                // Price
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(Spacing.xs),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "$${"%.2f".format(price)}",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = PrimaryColor,
+                        fontWeight = FontWeight.Bold
+                    )
+                    if (originalPrice != null && originalPrice > price) {
+                        Text(
+                            text = "$${"%.2f".format(originalPrice)}",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = TextSecondaryColor,
+                            textDecoration = TextDecoration.LineThrough
+                        )
+                    }
+                    if (discountPercent > 0) {
+                        Text(
+                            text = "-${discountPercent.toInt()}%",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = SuccessColor,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(Spacing.sm))
+
                 Text(
-                    text = "$${"%.2f".format(price)}",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = PrimaryColor,
-                    fontWeight = FontWeight.Bold
+                    text = "Subtotal: $${"%.2f".format(subtotal)}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = TextSecondaryColor,
+                    fontWeight = FontWeight.Medium
                 )
 
                 Spacer(modifier = Modifier.height(Spacing.sm))
@@ -239,4 +275,3 @@ private fun SummaryRow(
         )
     }
 }
-

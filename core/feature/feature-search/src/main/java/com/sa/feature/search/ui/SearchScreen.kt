@@ -19,6 +19,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import com.sa.core.ui.component.Badge
 import com.sa.core.ui.component.CategoryChipsRow
 import com.sa.core.ui.component.GenericErrorState
 import com.sa.core.ui.component.LoadingProductGridState
@@ -29,16 +34,20 @@ import com.sa.core.ui.component.SearchBar
 import com.sa.core.ui.component.SimpleTopAppBar
 import com.sa.core.ui.theme.Spacing
 import com.sa.core.ui.theme.TextSecondaryColor
+import com.sa.feature.cart.ui.CartViewModel
 import org.koin.androidx.compose.koinViewModel
 import kotlin.math.roundToInt
 
 @Composable
 fun SearchRoute(
     onBackClick: () -> Unit = {},
+    onCartClick: () -> Unit = {},
     onProductClick: (Int) -> Unit = {},
-    viewModel: SearchViewModel = koinViewModel()
+    viewModel: SearchViewModel = koinViewModel(),
+    cartViewModel: CartViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val cartState by cartViewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -48,7 +57,23 @@ fun SearchRoute(
     ) {
         SimpleTopAppBar(
             title = "Search",
-            onBackClick = onBackClick
+            onBackClick = onBackClick,
+            actions = {
+                Box {
+                    IconButton(onClick = onCartClick) {
+                        Icon(
+                            imageVector = Icons.Filled.ShoppingCart,
+                            contentDescription = "Cart"
+                        )
+                    }
+                    if (cartState.itemCount > 0) {
+                        Badge(
+                            count = cartState.itemCount,
+                            modifier = Modifier.align(Alignment.TopEnd)
+                        )
+                    }
+                }
+            }
         )
 
         SearchBar(

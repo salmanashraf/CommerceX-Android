@@ -16,7 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import com.sa.feature.cart.ui.CartScreenMockup
+import com.sa.feature.cart.ui.CartRoute
 import com.sa.feature.auth.ui.LoginScreenMockup
 import com.sa.feature.auth.ui.ProfileScreenMockup
 import com.sa.feature.product.ui.ProductDetailRoute
@@ -69,17 +69,20 @@ class MainActivity : ComponentActivity() {
                             )
                             AppScreen.SEARCH -> SearchRoute(
                                 onBackClick = { currentScreen = AppScreen.HOME },
+                                onCartClick = { currentScreen = AppScreen.CART },
                                 onProductClick = { productId ->
                                     selectedProductId = productId
                                     currentScreen = AppScreen.PRODUCT_DETAIL
                                 }
                             )
-                            AppScreen.CART -> CartScreenMockup(
-                                onBackClick = { currentScreen = AppScreen.HOME }
+                            AppScreen.CART -> CartRoute(
+                                onBackClick = { currentScreen = AppScreen.HOME },
+                                onContinueShopping = { currentScreen = AppScreen.HOME }
                             )
                             AppScreen.PRODUCT_DETAIL -> ProductDetailRoute(
                                 productId = selectedProductId,
-                                onBackClick = { currentScreen = AppScreen.HOME }
+                                onBackClick = { currentScreen = AppScreen.HOME },
+                                onCartClick = { currentScreen = AppScreen.CART }
                             )
                             AppScreen.HOME -> ProductListRoute(
                                 onProductClick = { productId ->

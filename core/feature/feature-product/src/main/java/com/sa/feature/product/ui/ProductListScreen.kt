@@ -42,6 +42,7 @@ import com.sa.core.ui.component.ProductCard
 import com.sa.core.ui.theme.ErrorColor
 import com.sa.core.ui.theme.CommerceXTheme
 import com.sa.core.ui.theme.Spacing
+import com.sa.feature.cart.ui.CartViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,9 +52,11 @@ fun ProductListRoute(
     onSearchClick: () -> Unit = {},
     onCartClick: () -> Unit = {},
     onProfileClick: () -> Unit = {},
-    viewModel: ProductListViewModel = koinViewModel()
+    viewModel: ProductListViewModel = koinViewModel(),
+    cartViewModel: CartViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val cartState by cartViewModel.uiState.collectAsState()
     val products = viewModel.products.collectAsLazyPagingItems()
     val refreshState = products.loadState.refresh
 
@@ -72,7 +75,7 @@ fun ProductListRoute(
         Column(modifier = Modifier.fillMaxSize()) {
             GlassmorphicAppBar(
                 title = "CommerceX",
-                cartItemCount = 0,
+                cartItemCount = cartState.itemCount,
                 onSearchClick = onSearchClick,
                 onCartClick = onCartClick
             )
@@ -153,6 +156,7 @@ fun ProductListRoute(
 
         BottomNavigationBar(
             selectedItem = uiState.selectedNavItem,
+            cartItemCount = cartState.itemCount,
             onItemSelected = { item ->
                 viewModel.onBottomNavItemSelected(item)
                 when (item) {
